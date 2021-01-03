@@ -113,29 +113,9 @@ func (q *RPQ) Pop() { //ok
 
 //Clear does post order traversal to delete.
 func (q *RPQ) Clear() {
-	if !q.Empty() {
-		var stackIn, stackOut stack
-		stackIn.push(q.head)
-		for !stackIn.empty() {
-			ptr := stackIn.top()
-			stackIn.pop() //Pop
-			stackOut.push(ptr)
-			if ptr.left != nil {
-				stackIn.push(ptr.left)
-			}
-			if ptr.next != nil && ptr.next != q.head {
-				stackIn.push(ptr.next)
-			}
-
-		}
-		for !stackOut.empty() {
-			//Freenode(ptr)
-			q.size--
-			stackOut.pop()
-		}
-
+	for !q.Empty() {
+		q.Pop()
 	}
-	q.head = nil
 }
 
 //Decrease key value. Type 2
