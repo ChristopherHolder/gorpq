@@ -1,9 +1,14 @@
 package rpq
 
-type valueType = int
+//KeyType type for rpq index key
+type KeyType = int
+
+//ValueType type for rpq values
+type ValueType = int
 
 type node struct {
-	val    valueType
+	key    KeyType
+	val    ValueType
 	left   *node
 	next   *node
 	parent *node
@@ -51,11 +56,11 @@ func (st *stack) empty() bool {
 	return st.length == 0
 }
 
-//RPQ Is the data structure.
+//RPQ Is the rank pairing queue.
 type RPQ struct {
 	head  *node
 	size  int
-	index map[valueType]*node
+	index map[KeyType]*node
 }
 
 //Empty returns bool
@@ -69,15 +74,18 @@ func (q *RPQ) Size() int {
 }
 
 //Top returns top value.
-func (q *RPQ) Top() valueType {
-	return q.head.val
+func (q *RPQ) Top() (KeyType, ValueType) {
+	return q.head.key, q.head.val
 }
 
-//Push inserts a value.
-func (q *RPQ) Push(val valueType) {
-	n := &node{val: val}
+//Push inserts a value, only unique keys.
+func (q *RPQ) Push(key KeyType, val ValueType) {
+	if _, ok := q.index[key]; ok {
+		return
+	}
+	n := &node{key: key, val: val}
 	q.insert(n)
-	q.index[val] = n
+	q.index[key] = n
 	q.size++
 }
 
@@ -100,6 +108,7 @@ func (q *RPQ) Pop() { //ok
 		q.multipass(bucket, ptr)
 		ptr = next
 	}
+	delete(q.index, q.head.key)
 	q.head = nil
 	q.size--
 
@@ -119,8 +128,8 @@ func (q *RPQ) Clear() {
 }
 
 //Decrease key value. Type 2
-func (q *RPQ) Decrease(val valueType) {
-	ptr, ok := q.index[val]
+func (q *RPQ) Decrease(key KeyType, val ValueType) {
+	ptr, ok := q.index[key]
 	if !ok {
 		return
 	}
@@ -233,7 +242,7 @@ func maxBucketSize(size int) int {
 }
 func (q *RPQ) multipass(bucket []*node, ptr *node) {
 	for bucket[ptr.rank] != nil {
-		var rank int = ptr.rank
+		var rank uint = uint(ptr.rank)
 		ptr = q.link(ptr, bucket[rank])
 		bucket[rank] = nil
 	}
@@ -242,5 +251,5 @@ func (q *RPQ) multipass(bucket []*node, ptr *node) {
 
 //NewRPQ generates RPQ structs
 func NewRPQ() *RPQ {
-	return &RPQ{index: make(map[valueType]*node)}
+	return &RPQ{index: make(map[KeyType]*node)}
 }
