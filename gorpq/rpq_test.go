@@ -1,4 +1,4 @@
-package rpq
+package gorpq
 
 import (
 	"math/rand"

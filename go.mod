@@ -1,3 +1,3 @@
-module github.com/ChristopherHolder/goRPQ
+module github.com/ChristopherHolder/gorpq
 
 go 1.13

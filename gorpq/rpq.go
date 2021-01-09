@@ -1,4 +1,4 @@
-package rpq
+package gorpq
 
 //KeyType type for rpq index key
 type KeyType = int
